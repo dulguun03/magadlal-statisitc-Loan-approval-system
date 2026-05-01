@@ -13,7 +13,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 
 
 
-df = pd.read_csv("loan_data.csv")
+df = pd.read_csv("loan_approval_dataset.csv")
 
 print("First 5 rows:")
 print(df.head())
