@@ -16,6 +16,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 
 
 df = pd.read_csv("loan_approval_dataset.csv")
+df.columns = df.columns.str.strip()
 
 print("First 5 rows:")
 print(df.head())
@@ -27,19 +28,16 @@ print(df.info())
 # 3. Data Cleaning
 
 # Fill missing values
-df['LoanAmount'].fillna(df['LoanAmount'].mean(), inplace=True)
-df['Loan_Amount_Term'].fillna(df['Loan_Amount_Term'].mean(), inplace=True)
-df['Credit_History'].fillna(1, inplace=True)
+df['loan_amount'] = df['loan_amount'].fillna(df['loan_amount'].mean())
+df['loan_term'] = df['loan_term'].fillna(df['loan_term'].mean())
 
 # Fill categorical missing values with most frequent
-df['Gender'].fillna(df['Gender'].mode()[0], inplace=True)
-df['Married'].fillna(df['Married'].mode()[0], inplace=True)
-df['Dependents'].fillna(df['Dependents'].mode()[0], inplace=True)
-df['Self_Employed'].fillna(df['Self_Employed'].mode()[0], inplace=True)
+df['education'] = df['education'].fillna(df['education'].mode()[0])
+df['self_employed'] = df['self_employed'].fillna(df['self_employed'].mode()[0])
 
 # Drop unnecessary column
-if 'Loan_ID' in df.columns:
-    df.drop('Loan_ID', axis=1, inplace=True)
+if 'loan_id' in df.columns:
+    df.drop('loan_id', axis=1, inplace=True)
 
 print("\nMissing values after cleaning:")
 print(df.isnull().sum())
@@ -48,7 +46,7 @@ print(df.isnull().sum())
 # 4. Convert categorical to numeric
 le = LabelEncoder()
 
-for col in df.select_dtypes(include='object'):
+for col in df.select_dtypes(include='str'):
     df[col] = le.fit_transform(df[col])
 
 
@@ -57,8 +55,8 @@ print(df.head())
 
 
 # 5. Split Features and Target
-X = df.drop('Loan_Status', axis=1)
-y = df['Loan_Status']
+X = df.drop('loan_status', axis=1)
+y = df['loan_status']
 
 
 # 6. Train-Test Split
@@ -131,13 +129,13 @@ plt.show()
 
 
 # 12. Example Prediction (NEW DATA)
-sample = X.iloc[0].values.reshape(1, -1)
+sample = X.iloc[[0]]
 
 prediction = lr.predict(sample)
 
 print("\nSample Prediction (Logistic Regression):", prediction)
 
-if prediction[0] == 1:
+if prediction[0] == 0:
     print("Loan Approved")
 else:
     print("Loan Rejected")
